@@ -185,6 +185,15 @@ function PlanetDetailScreen() {
 }, [planetID, planetInfo]; 
 
 
+const pageStyle = {
+    minHeight: '100vh',
+    width: '100vw',
+    background: 'radial-gradient(circle at center, #0e3057 0%, #0d122e 100%)',
+    color: 'white',
+    display: 'flex',
+    flexDirection: 'column'
+
+};
 
 
 
