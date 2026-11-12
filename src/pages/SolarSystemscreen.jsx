@@ -2,7 +2,9 @@ import { Container, Button, Spinner } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars } from '@react-three/drei';
+import { OrbitControls, Stars, Line } from '@react-three/drei';
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 
 
 
@@ -28,7 +30,7 @@ function OrbitingPlanet({ planet, onSelect }) {
         return (
         <>
 
-            <Line points={ringPoints} color="#ffffff" opacity={0.15} transparent lineWidth={1} />
+            <Line points={ringPoints} color="darkblue" opacity={0.15} transparent lineWidth={1} />
 
             <group ref={groupRef}>
                 <mesh
@@ -176,8 +178,8 @@ function SolarSystemscreen() {
 
             <div style={{ width: '100vw', height: '100vh' }}>
                 <Canvas camera={{ position: [0, 35, 75]}}>
-                    <ambientLight intensity={0.3} />
-                    <pointLight position={[0, 0, 0]} intensity={2.5} color="#ffffff" />
+                    <ambientLight intensity={1.3} />
+                    <pointLight position={[0, 0, 0]} intensity={3} decay={0} color="white" />
                     <Stars radius={200} depth={50} count={5000} factor={4} />
 
 
