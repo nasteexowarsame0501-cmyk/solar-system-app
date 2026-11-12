@@ -195,6 +195,17 @@ const pageStyle = {
 
 };
 
+if(!planetInfo){
+    return (
+        <div style={pageStyle} className = 'justify-content-center align-items-center'>
+        <h3> 'Planet' {planetID} 'not found'</h3>
+        <Button variant='outline-light' className = 'mt-3' onClick={() =>
+            Navigate('/solarsystem')}>
+            Back
+        </Button>
+        </div>
+    );
+}
 
 
 
