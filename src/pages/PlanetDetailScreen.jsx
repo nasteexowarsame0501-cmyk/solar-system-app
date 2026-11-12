@@ -134,6 +134,60 @@ function RotatingPlanet({color, hasRings}) {
     )
 }
 
+function PlanetDetailScreen() {
+    const{planetID} = useParams();
+    const naviagte = useNavigate();
+
+    const [distanceAU, setDistanceAU] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const planetInfo = PLANET_DATA[planetID?.toLowerCase()];
+
+
+    useEffect(() => {
+        if(!planetInfo){
+            setLoading(false);
+            return;
+        }
+    }
+
+    const fetchLivePosition = async () => {
+        try{
+            const response = await fetch (
+             `/api/nasa?format=json&COMMAND='${planetInfo.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'`
+            
+            );
+
+            if(response.ok){
+                const data = await response.json();
+                const match = data.result.macth(/X\)s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/);
+
+
+                if(match) {
+                    const x = parseFloat(match[1]);
+                    const y = parseFloat(match[2]);
+                    const z = parseFloat(match[3]);
+
+                    const dist = Math.sqrt(x * x + y * y + z * z);
+                        setDistanceAU(dist.toFixed(3));
+                }
+            }
+        } catch (error) {
+            console.error('Location search failed', error);
+        } finally {
+            setLoading(false);
+        }
+
+    };
+
+    fetchLivePosition();
+
+}, [planetID, planetInfo]; 
+
+
+
+
+
 
 
 
