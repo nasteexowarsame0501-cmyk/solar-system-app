@@ -106,6 +106,38 @@ const PLANET_DATA = {
 
 }
 
+function RotatingPlanet({color, hasRings}) {
+    const meshRef = useRef();
+
+    useFrame((_, delta) => {
+        if(meshRef.current) {
+            meshRef.current.rotation.y += 0.4 * delta; 
+        }
+    });
+
+    return (
+        <group ref={meshRef}>
+            <mesh>
+                <sphereGeometry args={[2.2, 64, 64]} />
+                <meshStandardMaterial color={color} roughness={0.6} metalness={0.1} />
+            </mesh>
+
+            {hasRings && (
+                <mesh rotation={[Math.PI/2.5, 0, 0]}>
+                    <ringGeometry args={[2.8, 4.2, 64]}/>
+                    <meshStandardMaterial color= '#C8B588' side={2} transparent opacity={0.8} />
+
+                </mesh>
+            )}
+
+        </group>
+    )
+}
+
+
+
+
+
 
 
 
