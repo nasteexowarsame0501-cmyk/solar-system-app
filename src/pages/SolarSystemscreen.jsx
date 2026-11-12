@@ -25,8 +25,25 @@ function OrbitingPlanet({ planet, onSelect }) {
         ringPoints.push([Math.cos(angle) * orbitRadius, 0, Math.sin(angle) * orbitRadius]);
     }
 
+        return (
+        <>
 
+            <Line points={ringPoints} color="#ffffff" opacity={0.15} transparent lineWidth={1} />
 
+            <group ref={groupRef}>
+                <mesh
+                    position={planet.position}
+                    onClick={() => onSelect(planet.id)}
+                    onPointerOver={() => (document.body.style.cursor = 'pointer')}
+                    onPointerOut={() => (document.body.style.cursor = 'auto')}
+                >
+                    <sphereGeometry args={[planet.radius, 32, 32]} />
+                    <meshStandardMaterial color={planet.color} roughness={0.5} />
+                </mesh>
+            </group>
+        </>
+    );
+}
 
 
 
