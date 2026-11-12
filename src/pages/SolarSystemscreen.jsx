@@ -60,14 +60,14 @@ function SolarSystemscreen() {
        useEffect(() => {
             
         const PLANET_LIST = [
-            { id: 'mercury', code: '199', name: 'Mercury', color: '#A5A5A5', radius: 0.6, scale: 12 },
-            { id: 'venus',   code: '299', name: 'Venus',   color: '#E3BB76', radius: 0.9, scale: 11 },
-            { id: 'earth',   code: '399', name: 'Earth',   color: '#2B82C9', radius: 1.0, scale: 10 },
-            { id: 'mars',    code: '499', name: 'Mars',    color: '#E27B58', radius: 0.7, scale: 9 },
-            { id: 'jupiter', code: '599', name: 'Jupiter', color: '#C88B3A', radius: 2.0, scale: 4.5 },
-            { id: 'saturn',  code: '699', name: 'Saturn',  color: '#E4D191', radius: 1.7, scale: 3.2 },
-            { id: 'uranus',  code: '799', name: 'Uranus',  color: '#4FD0E7', radius: 1.3, scale: 2.2 },
-            { id: 'neptune', code: '899', name: 'Neptune', color: '#4B70DD', radius: 1.3, scale: 1.7 }
+            { id: 'mercury', code: '199', name: 'Mercury', color: '#A5A5A5', radius: 0.6, scale: 12, speed: 0.8 },
+            { id: 'venus',   code: '299', name: 'Venus',   color: '#E3BB76', radius: 0.9, scale: 11, speed: 0.6 },
+            { id: 'earth',   code: '399', name: 'Earth',   color: '#2B82C9', radius: 1.0, scale: 10, speed: 0.5 },
+            { id: 'mars',    code: '499', name: 'Mars',    color: '#E27B58', radius: 0.7, scale: 9, speed: 0.4 },
+            { id: 'jupiter', code: '599', name: 'Jupiter', color: '#C88B3A', radius: 2.0, scale: 4.5, speed: 0.25 },
+            { id: 'saturn',  code: '699', name: 'Saturn',  color: '#E4D191', radius: 1.7, scale: 3.2, speed:  0.2 },
+            { id: 'uranus',  code: '799', name: 'Uranus',  color: '#4FD0E7', radius: 1.3, scale: 2.2, speed: 0.15 },
+            { id: 'neptune', code: '899', name: 'Neptune', color: '#4B70DD', radius: 1.3, scale: 1.7, speed: 0.1 }
         ];
 
 
@@ -80,8 +80,9 @@ function SolarSystemscreen() {
 
                 for (const planet of PLANET_LIST) {
                     const response = await fetch(
-                        `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'`
-                    );
+                         `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
+                        );
+
 
                     if (response.ok) {
                         const data = await response.json();
@@ -188,17 +189,11 @@ function SolarSystemscreen() {
                         <meshBasicMaterial color="#FDB813" />
                     </mesh>
 
-                    {planets.map((planet) => (
-                        <mesh
-                            key={planet.id}
-                            position={planet.position}
-                            onClick={() => navigate(`/planet/${planet.id}`)}
-                            onPointerOver={() => (document.body.style.cursor = 'pointer')}
-                            onPointerOut={() => (document.body.style.cursor = 'auto')}
-                        >
-                            <sphereGeometry args={[planet.radius, 32, 32]} />
-                            <meshStandardMaterial color={planet.color} />
-                        </mesh>
+                   {planets.map((planet) => (
+                    <OrbitingPlanet
+                    key={planet.id}
+                    planet={planet}
+                    onSelect={(id) => navigate(`/planet/${id}`)}/>
                     ))}
 
                     <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />

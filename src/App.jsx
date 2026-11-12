@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Startscreen />} />
         <Route path="/solar-system" element={<SolarSystemscreen />} />
-        <Route path="/planet/:planetId" element={<PlanetDetailScreen />} />
+        <Route path="/planet/:planetID" element={<PlanetDetailScreen />} />
       </Routes>
     </HashRouter>
   );

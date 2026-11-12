@@ -1,10 +1,10 @@
 //import needed paragarmas for this screen 
 
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card, Spinner } from 'react-bootstrap';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
-import { useRef } from 'react';
 
 
 //rotation the the planets
@@ -148,12 +148,12 @@ function PlanetDetailScreen() {
         const fetchLivePosition = async () => {
             try {
                 const response = await fetch(
-                    `/api/nasa?format=json&COMMAND='${planetInfo.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'`
+                    `/api/nasa?format=json&COMMAND='${planetInfo.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
                 );
 
                 if (response.ok) {
                     const data = await response.json();
-                    const match = data.result?.match(/X\)\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/i);
+                    const match = data.result?.match(/X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/i);
 
                     if (match) {
                         const x = parseFloat(match[1]);
@@ -186,8 +186,8 @@ function PlanetDetailScreen() {
         return (
             <div style={pageStyle} className="justify-content-center align-items-center">
                 <h3>Planet {planetID} not found</h3>
-                <Button variant="outline-light" className="mt-3" onClick={() => navigate('/solarsystem')}>
-                    Back
+                <Button variant="outline-light" className="mt-3" onClick={() => navigate('/solar-system')}>
+                    Return
                 </Button>
             </div>
         );
@@ -244,7 +244,7 @@ function PlanetDetailScreen() {
 
                                 <Row className="g-3 mt-1">
                                     <Col sm={6}>
-                                        <strong>Halkaisija:</strong>
+                                        <strong>Diameter:</strong>
                                         <div>{planetInfo.diameter}</div>
                                     </Col>
                                     <Col sm={6}>
