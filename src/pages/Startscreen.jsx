@@ -18,7 +18,7 @@ function Startscreen() {
             boxSizing: "border-box",
             display: "flex",
             flexDirection: "column",
-            background: 'radial-gradient(circle at center, #0e3057 0%, #0d122e 100%)',
+            background: 'radial-gradient(circle at center, #021328 0%, #08113f 100%)',
             color: "white",
             justifyContent: "center",
             alignItems: "center",
@@ -61,7 +61,7 @@ function Startscreen() {
                 border: "none",
                 borderradius: "50px",
                 cursor: "pointer",
-                boxShadow: "0 0 25px rgba(38, 94, 137, 0.5)",
+                boxShadow: "0 0 25px rgba(3, 16, 25, 0.5)",
                 transition: "transform 0.2s"
             }}
             

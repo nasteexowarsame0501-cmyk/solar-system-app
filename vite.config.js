@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/nasa': {
-        target: 'https://nasa.gov',
+        target: 'https://ssd.jpl.nasa.gov',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/nasa/, '/api/horizons.api'),
       },

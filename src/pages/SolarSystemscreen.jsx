@@ -1,3 +1,4 @@
+import { Container, Button, Spinner } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
@@ -104,7 +105,7 @@ function SolarSystemscreen() {
 
 
             <div style={{ width: '100vw', height: '100vh' }}>
-                <Canvas camera={{ position:, fov: 45 }}>
+                <Canvas camera={{ position: [0, 20, 35]}}>
                     <ambientLight intensity={0.3} />
                     <pointLight position={[0, 0, 0]} intensity={2.5} color="#ffffff" />
                     <Stars radius={200} depth={50} count={5000} factor={4} />
