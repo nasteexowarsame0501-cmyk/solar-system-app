@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {rocket} from "lucide-react";
+import {Rocket} from "lucide-react";
 
 
 function PlanetDetailScreen() {
@@ -32,6 +32,6 @@ function PlanetDetailScreen() {
 
 }
 
-
+export default PlanetDetailScreen; 
 
 

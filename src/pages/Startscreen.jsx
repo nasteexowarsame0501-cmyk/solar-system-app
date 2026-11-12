@@ -14,9 +14,11 @@ function Startscreen() {
     return (
         <div style={{
             minHeight: "100vh",
+            width: "100vw",
+            boxSizing: "border-box",
             display: "flex",
             flexDirection: "column",
-            background: 'radial-gradient(circle at center, #1B2735 0%, #090a0f 100%)',
+            background: 'radial-gradient(circle at center, #0e3057 0%, #0d122e 100%)',
             color: "white",
             justifyContent: "center",
             alignItems: "center",
@@ -50,7 +52,7 @@ function Startscreen() {
             style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
+                gap: "20px",
                 padding: '15px 19px',
                 fontSize: "1.3rem",
                 fontWeight: "bold",
@@ -59,7 +61,7 @@ function Startscreen() {
                 border: "none",
                 borderradius: "50px",
                 cursor: "pointer",
-                boxShadow: "0 0 25px rgba(9, 82, 137, 0.5)",
+                boxShadow: "0 0 25px rgba(38, 94, 137, 0.5)",
                 transition: "transform 0.2s"
             }}
             
