@@ -1,6 +1,6 @@
 //import external libraries
 import {useNavigate} from "react-router-dom";
-import {rocket} from "lucide-react";
+import {Rocket} from "lucide-react";
 import { Container, Button } from 'react-bootstrap';
 
 
@@ -42,9 +42,9 @@ function Startscreen() {
             <button onClick={() => {
                 navigate("/solar-system")} 
             }
-            OnMouseOver={(e) => {
+            onMouseOver={(e) => {
                 e.currentTarget.style.transform = "scale(1.1)"}}
-            OnMouseOut={(e) => {
+            onMouseOut={(e) => {
                 e.currentTarget.style.transform = "scale(1.0)"}}
 
             style={{

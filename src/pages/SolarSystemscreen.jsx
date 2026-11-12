@@ -9,8 +9,14 @@ function SolarSystemscreen() {
     useEffect(() => {
         const fetchPlanets = async () => {
             try {
+                const API_KEY = import.meta.env.VITE_SOLAR_API_KEY;
+
                 const response = await fetch(
-                    'https://api.le-systeme-solaire.net/rest/bodies/?filter[]=isPlanet,eq,true&order=semimajorAxis,asc'
+                    'https://api.le-systeme-solaire.net/rest/bodies/?filter[]=isPlanet,eq,true&order=semimajorAxis,asc',
+                    {
+                        headers: {
+                             Authorization: 'Bearer 8dd11810-cb9d-4925-970c-8e228246731c',
+        }},
                 );
                 if (!response.ok) {
                     throw new Error(`Request failed: ${response.status}`);

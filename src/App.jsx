@@ -1,14 +1,14 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import StartScreen from './pages/Startscreen';
-import SolarSystemScreen from './pages/SolarSystemscreen';
+import Startscreen from './pages/Startscreen';
+import SolarSystemscreen from './pages/SolarSystemscreen';
 import PlanetDetailScreen from './pages/PlanetDetailScreen';
 
 function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<StartScreen />} />
-        <Route path="/solar-system" element={<SolarSystemScreen />} />
+        <Route path="/" element={<Startscreen />} />
+        <Route path="/solar-system" element={<SolarSystemscreen />} />
         <Route path="/planet/:planetId" element={<PlanetDetailScreen />} />
       </Routes>
     </HashRouter>
