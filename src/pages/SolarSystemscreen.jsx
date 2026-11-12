@@ -1,0 +1,1 @@
+export default function SolarSystemScreen() { return <h1>Näkymä 1</h1>; }
