@@ -1,6 +1,8 @@
 //import external libraries
 import {useNavigate} from "react-router-dom";
 import {rocket} from "lucide-react";
+import { Container, Button } from 'react-bootstrap';
+
 
 function Startscreen() {
     const navigate = useNavigate(); 
@@ -27,9 +29,10 @@ function Startscreen() {
                 marginBottom: "1px",
                 letterSpacing: "0.1rem"
             }}> Solar System Explorer </h1>
-
-
-  
+            
+            
+            <div>
+                <Container>
             <p style={{
                 fontSize: "1.5rem",
                 marginBottom: "2rem",
@@ -51,7 +54,7 @@ function Startscreen() {
                 padding: '15px 19px',
                 fontSize: "1.3rem",
                 fontWeight: "bold",
-                color: white,
+                color: "white",
                 backgroundColor: 'black',
                 border: "none",
                 borderradius: "50px",
@@ -63,10 +66,11 @@ function Startscreen() {
               > 
               <Rocket size = {25}/>
                 start
-            </button> 
+            </button>
+            </Container>
+            </div>
         </div>
-);
-}
+  );
+  }
+
 export default Startscreen;
-
-
