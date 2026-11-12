@@ -6,6 +6,31 @@ import { OrbitControls, Stars } from '@react-three/drei';
 
 
 
+function OrbitingPlanet({ planet, onSelect }) {
+    const groupRef = useRef();
+
+
+    useFrame((_, delta) => {
+        if (groupRef.current) {
+            groupRef.current.rotation.y += planet.speed * delta;
+        }
+    });
+
+
+    const [x, , z] = planet.position;
+    const orbitRadius = Math.sqrt(x * x + z * z);
+    const ringPoints = [];
+    for (let i = 0; i <= 64; i++) {
+        const angle = (i / 64) * Math.PI * 2;
+        ringPoints.push([Math.cos(angle) * orbitRadius, 0, Math.sin(angle) * orbitRadius]);
+    }
+
+
+
+
+
+
+
 //add planets through their id
 function SolarSystemscreen() {
     const navigate = useNavigate();
