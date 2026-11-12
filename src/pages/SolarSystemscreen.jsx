@@ -1,82 +1,50 @@
-import {useNavigate} from "react-router-dom";
-import{ useState, useEffect} from 'react'
-
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SolarSystemscreen() {
     const navigate = useNavigate();
-    const [planets, setplanets] = useState([]);
-    const [loading, setloading] = useState(true);
-
-
-    const API_KEY = '8dd11810-cb9d-4925-970c-8e228246731c';
+    const [planets, setPlanets] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPlanets = async() => {
+        const fetchPlanets = async () => {
             try {
-                const response = await fetch("https://le-systeme-solaire.net[]=isPlanet,eq,true&order=semimajorAxis,as",
-                    {
-                        headers: {
-                            Authroization: 'Bearer $(API_KEY)',
-                        }, 
-                    
-                    }
-                    const data = await response.json();
-                    setplanets(data.bodies);
-
-            } catch (error){
-                console.error("Incorrcet API", error)
+                const response = await fetch(
+                    'https://api.le-systeme-solaire.net/rest/bodies/?filter[]=isPlanet,eq,true&order=semimajorAxis,asc'
+                );
+                if (!response.ok) {
+                    throw new Error(`Request failed: ${response.status}`);
+                }
+                const data = await response.json();
+                setPlanets(data.bodies ?? []);
+            } catch (error) {
+                console.error('Unable to fetch planets', error);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPlanets();
-    }, []); 
+    }, []);
 
-
-    if (loading) return <p> loading planets </p>
-
+    if (loading) return <p>Loading planets...</p>;
 
     return (
         <div>
-            <button onClick={() => navigate('/')} > back </button> 
-            <h1> solar systems planets </h1>
-
-
-            
-            
+            <button onClick={() => navigate('/')}>Back</button>
+            <h1>Solar system planets</h1>
+            <div>
+                {planets.map((planet) => (
+                    <button
+                        key={planet.id}
+                        onClick={() => navigate(`/planet/${planet.id}`)}
+                    >
+                        {planet.englishName}
+                    </button>
+                ))}
+            </div>
         </div>
-    )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    );
 }
 
-
-export default function SolarSystemscreen() {
-  return <h1>Näkymä 1</h1>;
-}
+export default SolarSystemscreen;
