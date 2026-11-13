@@ -73,10 +73,10 @@ function SolarSystemscreen() {
 
         const cachedPlanets = sessionStorage.getItem('solarSystemPlanets');
         if (cachedPlanets) {
-        setPlanets(JSON.parse(cachedPlanets));
-        setLoading(false);
-        return;
-    }
+            setPlanets(JSON.parse(cachedPlanets));
+            setLoading(false);
+            return;
+        }
 
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -85,10 +85,12 @@ function SolarSystemscreen() {
                 const loadedPlanets = [];
 
                 for (const planet of PLANET_LIST) {
-                    const response = await fetch(
-                         `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
-                        );
+                    const nasaUrl = `https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&TLIST_TYPE='UTC'&TLIST='2026-11-12,2026-11-13'&OUT_UNITS='AU-D'`;
+                    const apiUrl = import.meta.env.PROD
+                        ? `https://corsproxy.io/?${encodeURIComponent(nasaUrl)}`
+                        : `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
 
+                    const response = await fetch(apiUrl);
 
                     if (response.ok) {
                         const data = await response.json();
@@ -113,15 +115,15 @@ function SolarSystemscreen() {
                     throw new Error('No planet data returned from NASA API');
                 }
 
+                sessionStorage.setItem('solarSystemPlanets', JSON.stringify(loadedPlanets));
                 setPlanets(loadedPlanets);
             } catch (error) {
                 console.error('Unable to fetch planets', error);
-                setError(error.message);
+                setError(error.message || 'Unknown error');
             } finally {
                 setLoading(false);
             }
         };
-
 
         fetchPlanets();
     }, []);
