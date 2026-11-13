@@ -84,11 +84,11 @@ function SolarSystemscreen() {
 
                 for (const planet of PLANET_LIST) {
                     const queryParams = `format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
-                    const nasaUrl = `https://nasa.gov{queryParams}`;
+                    const nasaUrl = "https://ssd.jpl.nasa.gov/api/horizons.api?" + queryParams;
 
                     const apiUrl = import.meta.env.PROD
-                        ? `https://allorigins.win{encodeURIComponent(nasaUrl)}`
-                        : `/api/nasa?${queryParams}`;
+                    ? 'https://api.allorigins.win/raw?url='+ encodeURIComponent(nasaUrl) 
+                    : '/api/nasa?' + queryParams;
 
                     try {
                         const response = await fetch(apiUrl);
