@@ -85,12 +85,9 @@ function SolarSystemscreen() {
                 const loadedPlanets = [];
 
                 for (const planet of PLANET_LIST) {
-                    const nasaUrl = `https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&TLIST_TYPE='UTC'&TLIST='2026-11-12,2026-11-13'&OUT_UNITS='AU-D'`;
-                    const apiUrl = import.meta.env.PROD
-                        ? `https://corsproxy.io/?${encodeURIComponent(nasaUrl)}`
-                        : `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
-
-                    const response = await fetch(apiUrl);
+                    const response = await fetch(
+                         `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
+                        );
 
                     if (response.ok) {
                         const data = await response.json();
