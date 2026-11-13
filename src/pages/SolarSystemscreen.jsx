@@ -80,8 +80,7 @@ function SolarSystemscreen() {
 
         const fetchPlanets = async () => {
             try {
-                const loadedPlanets = [];
-
+                
                 for (const planet of PLANET_LIST) {
                     const queryParams = `format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
                     const nasaUrl = "https://ssd.jpl.nasa.gov/api/horizons.api?" + queryParams;
@@ -91,13 +90,16 @@ function SolarSystemscreen() {
                     : '/api/nasa?' + queryParams;
 
                     try {
-                        const response = await fetch(apiUrl);
+                        const response = await fetch(apiUrl, {
+                            signal: AbortSignal.timeout(4000)
+                        });
+
                         if (response.ok) {
                             const data = await response.json();
                             const match = data.result?.match(/X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/);
 
                             if (match) {
-                                loadedPlanets.push({
+                                return({
                                     ...planet,
                                     position: [
                                         parseFloat(match[1]) * planet.scale,
@@ -105,20 +107,19 @@ function SolarSystemscreen() {
                                         -parseFloat(match[2]) * planet.scale
                                     ]
                                 });
-                                await sleep(150);
-                                continue;
                             }
                         }
                     } catch (err) {
                         console.warn(`API failed for ${planet.name}, using fallback`, err);
                     }
 
-                    loadedPlanets.push({
+                    return {
                         ...planet,
                         position: FALLBACK_POSITIONS[planet.id]
-                    });
+                    };
                 }
 
+                const loadedPlanets = await Promise.all(planetPromises);
                 sessionStorage.setItem('solarSystemPlanets', JSON.stringify(loadedPlanets));
                 setPlanets(loadedPlanets);
             } catch (error) {
