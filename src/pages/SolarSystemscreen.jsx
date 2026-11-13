@@ -78,57 +78,71 @@ function SolarSystemscreen() {
             neptune: [-38.0, 0.6, -34.0]
         };
 
-        const fetchPlanets = async () => {
+      const fetchPlanets = async () => {
+    try {
+        const planetPromises = PLANET_LIST.map(async (planet) => {
+            const queryParams =
+                `format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
+
+            const nasaUrl =
+                "https://ssd.jpl.nasa.gov/api/horizons.api?" + queryParams;
+
+            const apiUrl = import.meta.env.PROD
+                ? 'https://api.allorigins.win/raw?url=' + encodeURIComponent(nasaUrl)
+                : '/api/nasa?' + queryParams;
+
             try {
-                
-                for (const planet of PLANET_LIST) {
-                    const queryParams = `format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
-                    const nasaUrl = "https://ssd.jpl.nasa.gov/api/horizons.api?" + queryParams;
+                const response = await fetch(apiUrl, {
+                    signal: AbortSignal.timeout(4000)
+                });
 
-                    const apiUrl = import.meta.env.PROD
-                    ? 'https://api.allorigins.win/raw?url='+ encodeURIComponent(nasaUrl) 
-                    : '/api/nasa?' + queryParams;
+                if (response.ok) {
+                    const data = await response.json();
 
-                    try {
-                        const response = await fetch(apiUrl, {
-                            signal: AbortSignal.timeout(4000)
-                        });
+                    const match = data.result?.match(
+                        /X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/
+                    );
 
-                        if (response.ok) {
-                            const data = await response.json();
-                            const match = data.result?.match(/X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/);
-
-                            if (match) {
-                                return({
-                                    ...planet,
-                                    position: [
-                                        parseFloat(match[1]) * planet.scale,
-                                        parseFloat(match[3]) * planet.scale,
-                                        -parseFloat(match[2]) * planet.scale
-                                    ]
-                                });
-                            }
-                        }
-                    } catch (err) {
-                        console.warn(`API failed for ${planet.name}, using fallback`, err);
+                    if (match) {
+                        return {
+                            ...planet,
+                            position: [
+                                parseFloat(match[1]) * planet.scale,
+                                parseFloat(match[3]) * planet.scale,
+                                -parseFloat(match[2]) * planet.scale
+                            ]
+                        };
                     }
-
-                    return {
-                        ...planet,
-                        position: FALLBACK_POSITIONS[planet.id]
-                    };
                 }
-
-                const loadedPlanets = await Promise.all(planetPromises);
-                sessionStorage.setItem('solarSystemPlanets', JSON.stringify(loadedPlanets));
-                setPlanets(loadedPlanets);
-            } catch (error) {
-                console.error('Unable to fetch planets', error);
-                setError(error.message || 'Unknown error');
-            } finally {
-                setLoading(false);
+            } catch (err) {
+                console.warn(
+                    `API failed for ${planet.name}, using fallback`,
+                    err
+                );
             }
-        };
+
+            return {
+                ...planet,
+                position: FALLBACK_POSITIONS[planet.id]
+            };
+        });
+
+        const loadedPlanets = await Promise.all(planetPromises);
+
+        sessionStorage.setItem(
+            'solarSystemPlanets',
+            JSON.stringify(loadedPlanets)
+        );
+
+        setPlanets(loadedPlanets);
+
+    } catch (error) {
+        console.error('Unable to fetch planets', error);
+        setError(error.message || 'Unknown error');
+    } finally {
+        setLoading(false);
+    }
+};
 
         fetchPlanets();
     }, []);
