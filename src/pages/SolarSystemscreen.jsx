@@ -1,23 +1,17 @@
 import { Container, Button, Spinner } from "react-bootstrap";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stars, Line } from '@react-three/drei';
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-
-
 
 function OrbitingPlanet({ planet, onSelect }) {
     const groupRef = useRef();
-
 
     useFrame((_, delta) => {
         if (groupRef.current) {
             groupRef.current.rotation.y += planet.speed * delta;
         }
     });
-
 
     const [x, , z] = planet.position;
     const orbitRadius = Math.sqrt(x * x + z * z);
@@ -27,9 +21,8 @@ function OrbitingPlanet({ planet, onSelect }) {
         ringPoints.push([Math.cos(angle) * orbitRadius, 0, Math.sin(angle) * orbitRadius]);
     }
 
-        return (
+    return (
         <>
-
             <Line points={ringPoints} color="darkblue" opacity={0.15} transparent lineWidth={1} />
 
             <group ref={groupRef}>
@@ -47,29 +40,23 @@ function OrbitingPlanet({ planet, onSelect }) {
     );
 }
 
-
-
-
-//add planets through their id
 function SolarSystemscreen() {
     const navigate = useNavigate();
     const [planets, setPlanets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-       useEffect(() => {
-            
+    useEffect(() => {
         const PLANET_LIST = [
             { id: 'mercury', code: '199', name: 'Mercury', color: '#A5A5A5', radius: 0.6, scale: 12, speed: 0.8 },
             { id: 'venus',   code: '299', name: 'Venus',   color: '#E3BB76', radius: 0.9, scale: 11, speed: 0.6 },
             { id: 'earth',   code: '399', name: 'Earth',   color: '#2B82C9', radius: 1.0, scale: 10, speed: 0.5 },
-            { id: 'mars',    code: '499', name: 'Mars',    color: '#E27B58', radius: 0.7, scale: 9, speed: 0.4 },
+            { id: 'mars',    code: '499', name: 'Mars',    color: '#E27B58', radius: 0.7, scale: 9,  speed: 0.4 },
             { id: 'jupiter', code: '599', name: 'Jupiter', color: '#C88B3A', radius: 2.0, scale: 4.5, speed: 0.25 },
-            { id: 'saturn',  code: '699', name: 'Saturn',  color: '#E4D191', radius: 1.7, scale: 3.2, speed:  0.2 },
+            { id: 'saturn',  code: '699', name: 'Saturn',  color: '#E4D191', radius: 1.7, scale: 3.2, speed: 0.2 },
             { id: 'uranus',  code: '799', name: 'Uranus',  color: '#4FD0E7', radius: 1.3, scale: 2.2, speed: 0.15 },
             { id: 'neptune', code: '899', name: 'Neptune', color: '#4B70DD', radius: 1.3, scale: 1.7, speed: 0.1 }
         ];
-
 
         const cachedPlanets = sessionStorage.getItem('solarSystemPlanets');
         if (cachedPlanets) {
@@ -80,36 +67,56 @@ function SolarSystemscreen() {
 
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+        const FALLBACK_POSITIONS = {
+            mercury: [2.8, 0.2, 3.1],
+            venus:   [-5.4, -0.3, 5.8],
+            earth:   [6.4, 0.0, -7.6],
+            mars:    [-10.2, 0.4, -8.5],
+            jupiter: [18.5, -0.5, 14.2],
+            saturn:  [-24.0, 0.8, 19.5],
+            uranus:  [32.0, -0.4, -26.0],
+            neptune: [-38.0, 0.6, -34.0]
+        };
+
         const fetchPlanets = async () => {
             try {
                 const loadedPlanets = [];
 
                 for (const planet of PLANET_LIST) {
-                    const response = await fetch(
-                         `/api/nasa?format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
-                        );
+                    const queryParams = `format=json&COMMAND='${planet.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`;
+                    const nasaUrl = `https://nasa.gov{queryParams}`;
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        const match = data.result.match(/X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/);
+                    const apiUrl = import.meta.env.PROD
+                        ? `https://allorigins.win{encodeURIComponent(nasaUrl)}`
+                        : `/api/nasa?${queryParams}`;
 
-                        if (match) {
-                            loadedPlanets.push({
-                                ...planet,
-                                position: [
-                                    parseFloat(match[1]) * planet.scale,
-                                    parseFloat(match[3]) * planet.scale,
-                                    -parseFloat(match[2]) * planet.scale
-                                ]
-                            });
+                    try {
+                        const response = await fetch(apiUrl);
+                        if (response.ok) {
+                            const data = await response.json();
+                            const match = data.result?.match(/X\s*=\s*([-\d.E+]+)\s*Y\s*=\s*([-\d.E+]+)\s*Z\s*=\s*([-\d.E+]+)/);
+
+                            if (match) {
+                                loadedPlanets.push({
+                                    ...planet,
+                                    position: [
+                                        parseFloat(match[1]) * planet.scale,
+                                        parseFloat(match[3]) * planet.scale,
+                                        -parseFloat(match[2]) * planet.scale
+                                    ]
+                                });
+                                await sleep(150);
+                                continue;
+                            }
                         }
+                    } catch (err) {
+                        console.warn(`API failed for ${planet.name}, using fallback`, err);
                     }
 
-                    await sleep(5);
-                }
-
-                if (loadedPlanets.length === 0) {
-                    throw new Error('No planet data returned from NASA API');
+                    loadedPlanets.push({
+                        ...planet,
+                        position: FALLBACK_POSITIONS[planet.id]
+                    });
                 }
 
                 sessionStorage.setItem('solarSystemPlanets', JSON.stringify(loadedPlanets));
@@ -125,8 +132,7 @@ function SolarSystemscreen() {
         fetchPlanets();
     }, []);
 
-
-  const pageStyle = {
+    const pageStyle = {
         minHeight: "100vh",
         width: "100%",
         boxSizing: "border-box",
@@ -181,24 +187,23 @@ function SolarSystemscreen() {
                 </div>
             </Container>
 
-
             <div style={{ width: '100vw', height: '100vh' }}>
-                <Canvas camera={{ position: [0, 35, 75]}}>
+                <Canvas camera={{ position: [0, 35, 75] }}>
                     <ambientLight intensity={1.3} />
                     <pointLight position={[0, 0, 0]} intensity={3} decay={0} color="white" />
                     <Stars radius={200} depth={50} count={5000} factor={4} />
-
 
                     <mesh position={[0, 0, 0]}>
                         <sphereGeometry args={[2.5, 32, 32]} />
                         <meshBasicMaterial color="#FDB813" />
                     </mesh>
 
-                   {planets.map((planet) => (
-                    <OrbitingPlanet
-                    key={planet.id}
-                    planet={planet}
-                    onSelect={(id) => navigate(`/planet/${id}`)}/>
+                    {planets.map((planet) => (
+                        <OrbitingPlanet
+                            key={planet.id}
+                            planet={planet}
+                            onSelect={(id) => navigate(`/planet/${id}`)}
+                        />
                     ))}
 
                     <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
@@ -209,3 +214,4 @@ function SolarSystemscreen() {
 }
 
 export default SolarSystemscreen;
+
