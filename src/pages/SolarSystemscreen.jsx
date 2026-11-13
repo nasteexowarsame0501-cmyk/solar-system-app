@@ -71,6 +71,12 @@ function SolarSystemscreen() {
         ];
 
 
+        const cachedPlanets = sessionStorage.getItem('solarSystemPlanets');
+        if (cachedPlanets) {
+        setPlanets(JSON.parse(cachedPlanets));
+        setLoading(false);
+        return;
+    }
 
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -100,7 +106,7 @@ function SolarSystemscreen() {
                         }
                     }
 
-                    await sleep(150);
+                    await sleep(5);
                 }
 
                 if (loadedPlanets.length === 0) {

@@ -145,7 +145,7 @@ function PlanetDetailScreen() {
             return;
         }
 
-        const fetchLivePosition = async () => {
+           const fetchLivePosition = async () => {
             try {
                 const response = await fetch(
                     `/api/nasa?format=json&COMMAND='${planetInfo.code}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@sun'&START_TIME='2026-11-12'&STOP_TIME='2026-11-13'&STEP_SIZE='1d'&OUT_UNITS='AU-D'`
@@ -169,6 +169,7 @@ function PlanetDetailScreen() {
                 setLoading(false);
             }
         };
+
 
         fetchLivePosition();
     }, [planetInfo]);

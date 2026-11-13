@@ -39,7 +39,7 @@ function Startscreen() {
                 fontSize: "1.5rem",
                 marginBottom: "2rem",
                 letterSpacing: "0.05rem" 
-            }} > Explore our solar system </p>
+            }} > Explore the solar system </p>
 
             <button onClick={() => {
                 navigate("/solar-system")} 
