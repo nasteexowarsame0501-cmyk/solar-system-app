@@ -17,4 +17,4 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## About the project
 This project is a solar system web app. You can see the different planets circulating the sun. By either pressing the buttons on your upper right corner or by pressing the planets you get to see fun little facts about the planet and its properties. 
-This project is easily accessed either though link to the web app ('http://localhost:5173/#/') or by opening project in VScode and writing ('npm run dev') in terminal. By pressing the command button and link the web app would open in vscode application as well. 
+This project is easily accessed either though link to the web app ('https://nasteexowarsame0501-cmyk.github.io/solar-system-app/') or by opening project in VScode and writing ('npm run dev') in terminal. By pressing the command button and link the web app would open in vscode application as well. 
